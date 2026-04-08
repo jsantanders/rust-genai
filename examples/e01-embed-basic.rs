@@ -5,6 +5,7 @@
 //! - Create batch embeddings
 //! - Use embedding options
 //! - Handle different providers
+//! - Use Fireworks Qwen3 embeddings
 
 use genai::Client;
 use genai::embed::{EmbedOptions, EmbedRequest};
@@ -14,8 +15,9 @@ use tracing_subscriber::EnvFilter;
 const MODEL_OPENAI_SMALL: &str = "text-embedding-3-small";
 const MODEL_OPENAI_LARGE: &str = "text-embedding-3-large";
 
-// Other providers (will return "not supported" errors for now)
+// Other providers
 const MODEL_COHERE: &str = "embed-v4.0";
+const MODEL_FIREWORKS_QWEN3: &str = "fireworks::qwen3-embedding-8b";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -176,6 +178,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 			}
 			Err(e) => println!("Error - {e}",),
 		}
+	}
+	println!();
+
+	// Example 7: Fireworks Qwen3 embeddings
+	println!("7. Fireworks Qwen3 Embeddings:");
+	let fireworks_options = EmbedOptions::new().with_dimensions(512).with_capture_usage(true);
+
+	match client
+		.embed(
+			MODEL_FIREWORKS_QWEN3,
+			"Find documents about Rust async patterns",
+			Some(&fireworks_options),
+		)
+		.await
+	{
+		Ok(response) => {
+			let embedding = response.first_embedding().ok_or("Should have embedding")?;
+			println!("   Model: {}", response.model_iden.model_name);
+			println!("   Provider model: {}", response.provider_model_iden.model_name);
+			println!("   Dimensions: {}", embedding.dimensions());
+			if let Some(usage) = response.usage.prompt_tokens {
+				println!("   Tokens used: {usage}");
+			}
+		}
+		Err(e) => println!("   Error: {e}"),
 	}
 	println!();
 

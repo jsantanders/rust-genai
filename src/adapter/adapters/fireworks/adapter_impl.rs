@@ -101,7 +101,7 @@ impl Adapter for FireworksAdapter {
 		embed_req: crate::embed::EmbedRequest,
 		options_set: crate::embed::EmbedOptionsSet<'_, '_>,
 	) -> Result<crate::adapter::WebRequestData> {
-		OpenAIAdapter::to_embed_request_data(service_target, embed_req, options_set)
+		super::embed::to_embed_request_data(service_target, embed_req, options_set)
 	}
 
 	fn to_embed_response(
@@ -109,6 +109,6 @@ impl Adapter for FireworksAdapter {
 		web_response: crate::webc::WebResponse,
 		options_set: crate::embed::EmbedOptionsSet<'_, '_>,
 	) -> Result<crate::embed::EmbedResponse> {
-		OpenAIAdapter::to_embed_response(model_iden, web_response, options_set)
+		super::embed::to_embed_response(model_iden, web_response, options_set)
 	}
 }

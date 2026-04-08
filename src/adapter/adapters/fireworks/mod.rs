@@ -6,6 +6,7 @@
 // region:    --- Modules
 
 mod adapter_impl;
+mod embed;
 
 pub use adapter_impl::*;
 
